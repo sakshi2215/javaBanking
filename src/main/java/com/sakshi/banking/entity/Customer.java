@@ -8,6 +8,39 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
+/*
+🔹 Basic Fields
+
+customerId → Long
+firstName → String
+lastName → String
+dateOfBirth → LocalDate
+gender → Gender (Enum)
+phone → String
+email → String
+kycStatus → KycStatus (Enum)
+customerStatus → Status (Enum)
+createdAt → LocalDateTime
+updatedAt → LocalDateTime
+version → Long
+
+🔹 Relationship Fields
+
+addressList → List<Address>
+@OneToMany
+mappedBy = "customer"
+CascadeType.ALL
+orphanRemoval = true
+FetchType.LAZY
+
+accounts → List<Account>
+@OneToMany
+mappedBy = "customer"
+CascadeType.ALL
+orphanRemoval = true
+FetchType.LAZY
+
+* */
 
 @Entity
 @Getter

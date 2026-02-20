@@ -5,6 +5,23 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/*
+* 🔹 Basic Fields
+
+id → Long
+street → String
+city → String
+state → String
+postalCode → String
+addressType → AddressType (Enum)
+isPrimary → boolean
+
+🔹 Relationship Field
+customer → Customer
+Annotated with @ManyToOne
+Mapped using customer_id as foreign key
+FetchType.LAZY*/
+
 @Entity
 @Table(name = "addresses")
 @Getter

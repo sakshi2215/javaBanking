@@ -7,13 +7,20 @@ import java.time.LocalDateTime;
 
 
 /*
- * account_id (PK)
- * account_number (unique)
- * account_type (Savings, Current, Fixed)
- * balance
- * opened_date
- * status
- * customer_id (FK)
+ 🔹 Basic Fields
+accountId → Long
+accountNumber → String
+accountType → AccountType (Enum)
+balance → BigDecimal
+openedDate → LocalDateTime
+status → Status (Enum)
+createdAt → LocalDateTime
+updatedAt → LocalDateTime
+version → Long
+🔹 Relationship Field
+customer → Customer
+Annotated with @ManyToOne
+Mapped using customer_id as foreign key
  */
 
 @Entity
