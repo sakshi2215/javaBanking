@@ -1,36 +1,15 @@
 package com.sakshi.banking.dto.request;
-
-/*
-* CreateCustomerRequest
-
-firstName
-lastName
-email
-phone
-dateOfBirth
-gender
-*
-* Customer
- ├── Account
- │    ├── Card
- │    ├── Transaction
- │    ├── Cheque
- │
- ├── Address
- ├── Beneficiary
- ├── Loan
- ├── Notification
- ├── Online Banking
-* */
-
 import com.sakshi.banking.entity.Gender;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
-import org.hibernate.annotations.processing.Pattern;
+import jakarta.validation.constraints.*;
+import lombok.*;
+
 import java.time.LocalDate;
 
-
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class CreateCustomerRequest {
 
     @NotBlank(message = "First Name is required")
@@ -54,10 +33,41 @@ public class CreateCustomerRequest {
     @Email(message = "Invalid email format")
     private String email;
 
+    @NotBlank(message = "Phone number is required")
+    @Pattern(
+            regexp = "^(\\+91[\\-\\s]?)?[6-9]\\d{9}$",
+            message = "Please enter valid phone number"
+    )
     private String phone;
 
+    @Past(message = "Date of birth must be in the past")
+    @NotNull(message = "Date of birth is required")
     private LocalDate dateOfBirth;
 
+    @NotNull(message = "Gender is mandatory")
     private Gender gender;
 
 }
+
+/*
+* CreateCustomerRequest
+
+firstName
+lastName
+email
+phone
+dateOfBirth
+gender
+*
+* Customer
+ ├── Account
+ │    ├── Card
+ │    ├── Transaction
+ │    ├── Cheque
+ │
+ ├── Address
+ ├── Beneficiary
+ ├── Loan
+ ├── Notification
+ ├── Online Banking
+* */
