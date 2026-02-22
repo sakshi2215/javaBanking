@@ -71,7 +71,7 @@ public class Customer {
     @Column(name = "gender", length = 10)
     private Gender gender;
 
-    @Column(name = "phone", unique = true, length = 15)
+    @Column(name = "phone", unique = true, length = 13)
     private String phone;
 
     @Column(name = "email", unique = true, length = 100)
@@ -79,11 +79,11 @@ public class Customer {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "kyc_status", nullable = false)
-    private KycStatus kycStatus;
+    private KycStatus kycStatus = KycStatus.PENDING;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "customer_status", nullable = false)
-    private Status customerStatus;
+    private Status customerStatus = Status.INACTIVE;
 
     @OneToMany(
             mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY

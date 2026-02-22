@@ -22,6 +22,9 @@ import lombok.*;
 @Builder
 public class CreateAddressRequest {
 
+    @NotBlank(message = "Customer id cannot be blank")
+    private Long customerId;
+
     @NotBlank(message = "Street detail is mandatory")
     @Size(min=5, max = 100, message = "Street detail must be between 5 and 100 character")
     private String street;

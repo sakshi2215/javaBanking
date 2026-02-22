@@ -1,5 +1,6 @@
 package com.sakshi.banking.dto.request;
 import com.sakshi.banking.entity.Gender;
+import com.sakshi.banking.validation.annotation.ValidEnum;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
@@ -45,7 +46,8 @@ public class CreateCustomerRequest {
     private LocalDate dateOfBirth;
 
     @NotNull(message = "Gender is mandatory")
-    private Gender gender;
+    @ValidEnum(enumClass = Gender.class, message = "Gender can be MALE, FEMALE OR OTHER")
+    private String gender;
 
 }
 
