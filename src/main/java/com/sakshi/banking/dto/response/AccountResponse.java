@@ -2,6 +2,7 @@ package com.sakshi.banking.dto.response;
 import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -14,7 +15,7 @@ public class AccountResponse {
     private String accountType;
     private BigDecimal balance;
     private String status;
-    private LocalDate openedDate;
+    private LocalDateTime openedDate;
 }
 
 /*
