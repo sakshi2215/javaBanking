@@ -1,21 +1,21 @@
 package com.sakshi.banking.service;
 import com.sakshi.banking.dto.request.CreateAddressRequest;
 import com.sakshi.banking.dto.response.AddressResponse;
-import com.sakshi.banking.dto.response.CustomerResponse;
 import com.sakshi.banking.entity.Address;
 import com.sakshi.banking.entity.AddressType;
 import com.sakshi.banking.entity.Customer;
 import com.sakshi.banking.exceptions.ResourceNotFoundException;
-import com.sakshi.banking.repository.AddressRepo;
 import com.sakshi.banking.repository.CustomerRepo;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class AddressService {
     @Autowired
     public CustomerRepo customerRepo;
-    public AddressRepo addressRepo;
-    public CustomerService customerService;
 
+    @Transactional
     public AddressResponse createAddress(CreateAddressRequest request){
 
         Customer customer = customerRepo.findById(request.getCustomerId())
