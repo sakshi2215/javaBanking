@@ -21,6 +21,12 @@ public class CustomerService {
         this.customerRepository = customerRepository;
     }
 
+
+    /**
+     * Create new Customer
+     * @param request (CustomerRequest)
+     * @return CustomerResponse if Customer is created
+     */
     @Transactional
     public CustomerResponse createCustomer(CreateCustomerRequest request){
 
@@ -52,14 +58,18 @@ public class CustomerService {
         );
     }
 
-
+    /**
+     * Get Customer Details
+     * @param customerId
+     * @return CustomerResponse if Customer exists
+     */
     public CustomerResponse findCustomerById(Long customerId){
         Customer savedCustomer = customerRepository.findById(customerId).orElseThrow(()->
                 new ResourceNotFoundException("Customer does not exists with this ID"));
 
-        //-- HAVE TO MODIFY
+        //-- HAVE TO MODIFY-- Exception to throw
         if(savedCustomer.getCustomerStatus()== Status.CLOSED){
-            throw  new RuntimeException("Customer does not exits");
+            throw  new ResourceNotFoundException("Customer is Inactive");
         }
 
         return new CustomerResponse(
@@ -74,12 +84,19 @@ public class CustomerService {
         );
     }
 
+    /**
+     * Delete customer by ID
+     * @param customerId
+     * @return true if deleted else false
+     */
     @Transactional
-    public void deleteCustomer(Long customerId){
+    public boolean deleteCustomer(Long customerId){
         Customer savedCustomer = customerRepository.findById(customerId).orElseThrow(()->
-                new ResourceNotFoundException("Customer does not exixts with this ID"));
+                new ResourceNotFoundException("Customer does not exists with this ID"));
         savedCustomer.setCustomerStatus(Status.CLOSED);
-        customerRepository.save(savedCustomer);
+        Customer modifiedCustomer = customerRepository.save(savedCustomer);
+        if(modifiedCustomer.getCustomerStatus()==Status.CLOSED) return true;
+        return false;
 
     }
 

@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 
 /*
+  customerId ->Long
 * street ->string
 * city -> string
 * state ->string
@@ -22,22 +23,22 @@ import lombok.*;
 @Builder
 public class CreateAddressRequest {
 
-    @NotBlank(message = "Customer id cannot be blank")
+    @NotNull(message = "Customer id cannot be blank")
     private Long customerId;
 
-    @NotBlank(message = "Street detail is mandatory")
+    @NotNull(message = "Street detail is mandatory")
     @Size(min=5, max = 100, message = "Street detail must be between 5 and 100 character")
     private String street;
 
-    @NotBlank(message = "City cannot be blank")
+    @NotNull(message = "City cannot be blank")
     @Size(min = 5, max = 50, message = "City name must be between 5 and 50 character")
     private String city;
 
-    @NotBlank(message = "State cannot be blank")
+    @NotNull(message = "State cannot be blank")
     @Size(min = 5, max = 50, message = "State name must be between 5 and 50 character")
     private String state;
 
-    @NotBlank(message = "Postal code cannot be left blank")
+    @NotNull(message = "Postal code cannot be left blank")
     @Pattern(
             regexp = "^[1-9][0-9]{5}$",
             message = "Please enter valid Postal Code"
