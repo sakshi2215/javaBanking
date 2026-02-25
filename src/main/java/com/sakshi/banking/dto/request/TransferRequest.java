@@ -12,13 +12,14 @@ import java.math.BigDecimal;
 @Builder
 public class TransferRequest {
     @NotNull(message = "Account Number cannot be blank")
-    private String fromAccountNumber;
+    private String sourceAccountNumber;
 
     @NotNull(message = "Account Number cannot be blank")
-    private String toAccountNumber;
+    private String destinationAccountNumber;
 
     @DecimalMin(value = "0.0", inclusive = false)
     @Digits(integer=5, fraction=2)
     private BigDecimal amount;
 
+    private String description;
 }

@@ -9,26 +9,14 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class TransferResponse {
-    private String transactionId;
-    private String referenceNumber;
-    private String transactionType;
+
     private BigDecimal amount;
-    private String transactionStatus;
-    private LocalDateTime transactionDate;
-    private String toAccountNumber;
-    private String fromAccountNumber;
-    private String balanceAfterTransaction;
-    private String description;
+    private String sourceAccountNumber;
+    private String destinationAccountNumber;
+    private BigDecimal sourceBalanceAfterTransaction;
+    private BigDecimal destinationBalanceAfterTransaction;
+    private String debitTransactionReference;
+    private String creditTransactionReference;
 }
 
 
-/*
-* transactionId
-referenceNumber
-transactionType
-amount
-transactionStatus
-transactionDate
-accountNumber-> to and from
-balanceAfterTransaction
-description*/
