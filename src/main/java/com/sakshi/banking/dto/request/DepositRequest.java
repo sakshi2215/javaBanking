@@ -19,4 +19,7 @@ public class DepositRequest {
     @Digits(integer=5, fraction=2)
     private BigDecimal amount;
 
+    private String description;
+
+
 }
