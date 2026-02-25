@@ -4,13 +4,31 @@ import com.sakshi.banking.dto.response.CustomerResponse;
 import com.sakshi.banking.entity.Customer;
 import com.sakshi.banking.entity.Gender;
 import com.sakshi.banking.entity.Status;
-import com.sakshi.banking.exceptions.ResourceAlreadyExistsException;
-import com.sakshi.banking.exceptions.ResourceNotFoundException;
+import com.sakshi.banking.exceptions.customer.CustomerAlreadyExistsException;
+import com.sakshi.banking.exceptions.customer.CustomerInactiveException;
+import com.sakshi.banking.exceptions.customer.CustomerNotFoundException;
 import com.sakshi.banking.repository.CustomerRepo;
 import com.sakshi.banking.utility.PhoneNumberUtil;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service responsible for managing customer lifecycle operations.
+ *
+ * <p><strong>Domain Responsibility:</strong>
+ * Handles creation, retrieval, and soft deletion of {@code Customer} entities.
+ *
+ * <p><strong>Business Rules:</strong>
+ * <ul>
+ *     <li>A customer cannot be created if an account with the same email or phone already exists</li>
+ *     <li>Deleting a customer marks the customer status as {@code CLOSED} instead of physical deletion</li>
+ *     <li>Inactive or closed customers cannot be retrieved for normal operations</li>
+ * </ul>
+ *
+ * <p><strong>Transaction Management:</strong>
+ * Customer creation and deletion execute within a single database transaction.
+ * Retrieval is read-only and does not require a transaction.
+ */
 @Service
 public class CustomerService {
 
@@ -23,16 +41,27 @@ public class CustomerService {
 
 
     /**
-     * Create new Customer
-     * @param request (CustomerRequest)
-     * @return CustomerResponse if Customer is created
+     * Creates a new customer in the system.
+     *
+     * <p>This method performs the following steps:
+     * <ul>
+     *     <li>Checks if a customer with the same email or phone already exists</li>
+     *     <li>Formats the phone number according to Indian format</li>
+     *     <li>Creates a new {@code Customer} entity</li>
+     *     <li>Persists the customer in the database</li>
+     * </ul>
+     *
+     * @param request contains customer details such as first name, last name,
+     *                email, phone, date of birth, and gender
+     * @return CustomerResponse containing customer details after creation
+     * @throws CustomerAlreadyExistsException if a customer with the same email or phone already exists
      */
     @Transactional
     public CustomerResponse createCustomer(CreateCustomerRequest request){
 
         //check if customer already exists or not
         if(customerRepository.existsByEmail(request.getEmail()) || customerRepository.existsByPhone(request.getPhone())){
-            throw new ResourceAlreadyExistsException("Customer Already Exists with the email or phone Number");
+            throw new CustomerAlreadyExistsException("Customer Already Exists with the email or phone Number");
         }
 
         Customer customer = new Customer();
@@ -59,17 +88,27 @@ public class CustomerService {
     }
 
     /**
-     * Get Customer Details
-     * @param customerId
-     * @return CustomerResponse if Customer exists
+     * Retrieves customer details by ID.
+     *
+     * <p>This method performs the following:
+     * <ul>
+     *     <li>Fetches the {@code Customer} entity by ID</li>
+     *     <li>Throws an exception if the customer does not exist</li>
+     *     <li>Prevents access if the customer is inactive or closed</li>
+     * </ul>
+     *
+     * @param customerId unique identifier of the customer
+     * @return CustomerResponse containing customer details
+     * @throws CustomerNotFoundException if the customer does not exist or is inactive/closed
      */
+    @Transactional
     public CustomerResponse findCustomerById(Long customerId){
         Customer savedCustomer = customerRepository.findById(customerId).orElseThrow(()->
-                new ResourceNotFoundException("Customer does not exists with this ID"));
+                new CustomerNotFoundException("Customer does not exists with this ID"));
 
-        //-- HAVE TO MODIFY-- Exception to throw
+
         if(savedCustomer.getCustomerStatus()== Status.CLOSED){
-            throw  new ResourceNotFoundException("Customer is Inactive");
+            throw  new CustomerInactiveException("Customer is Inactive");
         }
 
         return new CustomerResponse(
@@ -85,18 +124,26 @@ public class CustomerService {
     }
 
     /**
-     * Delete customer by ID
-     * @param customerId
-     * @return true if deleted else false
+     * Soft deletes a customer by marking their status as {@code CLOSED}.
+     *
+     * <p>This method performs the following:
+     * <ul>
+     *     <li>Fetches the {@code Customer} entity by ID</li>
+     *     <li>Throws an exception if the customer does not exist</li>
+     *     <li>Updates the customer status to {@code CLOSED}</li>
+     *     <li>Persists the updated status in the database</li>
+     * </ul>
+     *
+     * @param customerId unique identifier of the customer to delete
+     * @return true if the customer status was successfully updated to {@code CLOSED}, else false
+     * @throws CustomerNotFoundException if the customer does not exist
      */
     @Transactional
-    public boolean deleteCustomer(Long customerId){
+    public void deleteCustomer(Long customerId){
         Customer savedCustomer = customerRepository.findById(customerId).orElseThrow(()->
-                new ResourceNotFoundException("Customer does not exists with this ID"));
+                new CustomerNotFoundException("Customer does not exists with this ID"));
         savedCustomer.setCustomerStatus(Status.CLOSED);
         Customer modifiedCustomer = customerRepository.save(savedCustomer);
-        if(modifiedCustomer.getCustomerStatus()==Status.CLOSED) return true;
-        return false;
 
     }
 

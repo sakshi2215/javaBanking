@@ -47,9 +47,9 @@ public class CustomerController {
     }
 
     @DeleteMapping("/{customerId}")
-    public boolean deleteCustomer(@PathVariable Long customerId){
-        boolean isDeleted = customerService.deleteCustomer(customerId);
-        return isDeleted;
+    public void deleteCustomer(@PathVariable Long customerId){
+       customerService.deleteCustomer(customerId);
+
     }
 
     @PostMapping("/createAccount/{customerId}")
@@ -57,6 +57,8 @@ public class CustomerController {
         AccountResponse response = accountService.createAccount(request, customerId);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
+
+
 
 
 }
