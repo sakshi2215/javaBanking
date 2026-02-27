@@ -1,17 +1,24 @@
 package com.sakshi.banking.service;
 
 import com.sakshi.banking.dto.request.CreateCustomerRequest;
+import com.sakshi.banking.dto.response.AccountResponse;
 import com.sakshi.banking.dto.response.CustomerResponse;
+import com.sakshi.banking.entity.Account;
 import com.sakshi.banking.entity.Customer;
 import com.sakshi.banking.entity.Gender;
 import com.sakshi.banking.entity.Status;
+import com.sakshi.banking.exceptions.account.AccountNotFoundException;
 import com.sakshi.banking.exceptions.customer.CustomerAlreadyExistsException;
 import com.sakshi.banking.exceptions.customer.CustomerInactiveException;
 import com.sakshi.banking.exceptions.customer.CustomerNotFoundException;
+import com.sakshi.banking.repository.AccountRepo;
 import com.sakshi.banking.repository.CustomerRepo;
 import com.sakshi.banking.utility.PhoneNumberUtil;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Service responsible for managing customer lifecycle operations.
@@ -40,9 +47,11 @@ import org.springframework.stereotype.Service;
 public class CustomerService {
 
     private final CustomerRepo customerRepository;
+    private final AccountRepo accountRepo;
 
-    public CustomerService(CustomerRepo customerRepository) {
+    public CustomerService(CustomerRepo customerRepository, AccountRepo accountRepo) {
         this.customerRepository = customerRepository;
+        this.accountRepo = accountRepo;
     }
 
     /**
@@ -175,12 +184,12 @@ public class CustomerService {
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new CustomerNotFoundException("Customer does not exists with this ID"));
 
-        List<Account> accounts = accountRepository.findByCustomer(customer);
+        List<Account> accounts = accountRepo.findByCustomer(customer);
 
         return accounts.stream().map(account -> AccountResponse.builder()
                 .accountNumber(account.getAccountNumber())
                 .accountType(account.getAccountType().name())
-                .balance(account.getBalance().toString())
+                .balance(account.getBalance())
                 .status(account.getStatus().name())
                 .openedDate(account.getOpenedDate())
                 .build()).collect(Collectors.toList());

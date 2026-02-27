@@ -5,6 +5,7 @@ import com.sakshi.banking.dto.response.AccountResponse;
 import com.sakshi.banking.entity.Account;
 import com.sakshi.banking.entity.AccountType;
 import com.sakshi.banking.entity.Customer;
+import com.sakshi.banking.entity.Status;
 import com.sakshi.banking.exceptions.account.AccountNotFoundException;
 import com.sakshi.banking.exceptions.customer.CustomerNotFoundException;
 import com.sakshi.banking.repository.AccountRepo;
@@ -12,6 +13,10 @@ import com.sakshi.banking.repository.CustomerRepo;
 import com.sakshi.banking.utility.AccountNumberGenerationUtil;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Service responsible for managing account lifecycle operations.
@@ -179,7 +184,7 @@ public class AccountService {
         Account account = accountRepo.findByAccountNumber(accountNumber)
                 .orElseThrow(() -> new AccountNotFoundException("Account with provided number does not exists"));
 
-        if (account.getStatus() != AccountStatus.ACTIVE) {
+        if (account.getStatus() != Status.ACTIVE) {
             throw new IllegalStateException("Account is not active");
         }
 
@@ -187,7 +192,7 @@ public class AccountService {
             throw new IllegalStateException("Account has non-zero balance");
         }
 
-        account.setStatus(AccountStatus.CLOSED);
+        account.setStatus(Status.CLOSED);
         accountRepo.save(account);
     }
 
@@ -206,7 +211,7 @@ public class AccountService {
      * @param status        new status of the account
      * @throws AccountNotFoundException if the account does not exist
      */
-    public void updateAccountStatus(String accountNumber, AccountStatus status) {
+    public void updateAccountStatus(String accountNumber, Status status) {
         Account account = accountRepo.findByAccountNumber(accountNumber)
                 .orElseThrow(() -> new AccountNotFoundException("Account with provided number does not exists"));
 
@@ -232,7 +237,7 @@ public class AccountService {
         Account account = accountRepo.findByAccountNumber(accountNumber)
                 .orElseThrow(() -> new AccountNotFoundException("Account with provided number does not exists"));
 
-        account.setStatus(AccountStatus.BLOCKED);
+        account.setStatus(Status.BLOCKED);
         accountRepo.save(account);
     }
 
@@ -254,7 +259,7 @@ public class AccountService {
         Account account = accountRepo.findByAccountNumber(accountNumber)
                 .orElseThrow(() -> new AccountNotFoundException("Account with provided number does not exists"));
 
-        account.setStatus(AccountStatus.ACTIVE);
+        account.setStatus(Status.ACTIVE);
         accountRepo.save(account);
     }
 
@@ -297,7 +302,7 @@ public class AccountService {
         Account account = accountRepo.findByAccountNumber(accountNumber)
                 .orElseThrow(() -> new AccountNotFoundException("Account with provided number does not exists"));
 
-        account.setStatus(AccountStatus.ACTIVE);
+        account.setStatus(Status.ACTIVE);
         accountRepo.save(account);
     }
 

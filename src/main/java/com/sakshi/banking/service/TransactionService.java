@@ -4,6 +4,7 @@ import com.sakshi.banking.dto.request.DepositRequest;
 import com.sakshi.banking.dto.request.TransferRequest;
 import com.sakshi.banking.dto.request.WithdrawRequest;
 import com.sakshi.banking.dto.response.DepositResponse;
+import com.sakshi.banking.dto.response.TransactionResponse;
 import com.sakshi.banking.dto.response.TransferResponse;
 import com.sakshi.banking.dto.response.WithdrawalResponse;
 import com.sakshi.banking.entity.*;
@@ -16,7 +17,9 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /*
 
