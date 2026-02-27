@@ -13,9 +13,6 @@ import com.sakshi.banking.utility.AccountNumberGenerationUtil;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 /**
  * Service responsible for managing account lifecycle operations.
  *
@@ -129,6 +126,22 @@ public class AccountService {
 
     }
 
+    /**
+     * Gets all bank accounts for a customer.
+     *
+     * <p>
+     * This method performs the following steps:
+     * <ul>
+     * <li>Retrieves the customer by ID</li>
+     * <li>Validates that the customer exists</li>
+     * <li>Retrieves all accounts for the customer</li>
+     * </ul>
+     *
+     * @param customerId unique identifier of the customer
+     * @return List of AccountResponse containing account details
+     * @throws CustomerNotFoundException if the customer does not exist
+     */
+
     public List<AccountResponse> getAccountsbyCustomer(Long customerId) {
         Customer customer = customerRepo.findById(customerId)
                 .orElseThrow(() -> new CustomerNotFoundException("Customer does not exist with the given ID"));
@@ -142,6 +155,150 @@ public class AccountService {
                 .balance(account.getBalance())
                 .openedDate(account.getOpenedDate())
                 .build()).collect(Collectors.toList());
+    }
+
+    /**
+     * Closes a bank account.
+     * 
+     * <p>
+     * This method performs the following steps:
+     * <ul>
+     * <li>Retrieves the account by account number</li>
+     * <li>Validates that the account exists</li>
+     * <li>Validates that the account is active</li>
+     * <li>Validates that the account has zero balance</li>
+     * <li>Closes the account</li>
+     * </ul>
+     * 
+     * @param accountNumber unique identifier of the account
+     * @throws AccountNotFoundException if the account does not exist
+     * @throws IllegalStateException    if the account is not active or has non-zero
+     *                                  balance
+     */
+    public void closeAccount(String accountNumber) {
+        Account account = accountRepo.findByAccountNumber(accountNumber)
+                .orElseThrow(() -> new AccountNotFoundException("Account with provided number does not exists"));
+
+        if (account.getStatus() != AccountStatus.ACTIVE) {
+            throw new IllegalStateException("Account is not active");
+        }
+
+        if (account.getBalance().compareTo(BigDecimal.ZERO) != 0) {
+            throw new IllegalStateException("Account has non-zero balance");
+        }
+
+        account.setStatus(AccountStatus.CLOSED);
+        accountRepo.save(account);
+    }
+
+    /**
+     * Updates the status of an account.
+     * 
+     * <p>
+     * This method performs the following steps:
+     * <ul>
+     * <li>Retrieves the account by account number</li>
+     * <li>Validates that the account exists</li>
+     * <li>Updates the account status</li>
+     * </ul>
+     * 
+     * @param accountNumber unique identifier of the account
+     * @param status        new status of the account
+     * @throws AccountNotFoundException if the account does not exist
+     */
+    public void updateAccountStatus(String accountNumber, AccountStatus status) {
+        Account account = accountRepo.findByAccountNumber(accountNumber)
+                .orElseThrow(() -> new AccountNotFoundException("Account with provided number does not exists"));
+
+        account.setStatus(status);
+        accountRepo.save(account);
+    }
+
+    /**
+     * Blocks an account.
+     * 
+     * <p>
+     * This method performs the following steps:
+     * <ul>
+     * <li>Retrieves the account by account number</li>
+     * <li>Validates that the account exists</li>
+     * <li>Blocks the account</li>
+     * </ul>
+     * 
+     * @param accountNumber unique identifier of the account
+     * @throws AccountNotFoundException if the account does not exist
+     */
+    public void blockAccount(String accountNumber) {
+        Account account = accountRepo.findByAccountNumber(accountNumber)
+                .orElseThrow(() -> new AccountNotFoundException("Account with provided number does not exists"));
+
+        account.setStatus(AccountStatus.BLOCKED);
+        accountRepo.save(account);
+    }
+
+    /**
+     * Unblocks an account.
+     * 
+     * <p>
+     * This method performs the following steps:
+     * <ul>
+     * <li>Retrieves the account by account number</li>
+     * <li>Validates that the account exists</li>
+     * <li>Unblocks the account</li>
+     * </ul>
+     * 
+     * @param accountNumber unique identifier of the account
+     * @throws AccountNotFoundException if the account does not exist
+     */
+    public void unblockAccount(String accountNumber) {
+        Account account = accountRepo.findByAccountNumber(accountNumber)
+                .orElseThrow(() -> new AccountNotFoundException("Account with provided number does not exists"));
+
+        account.setStatus(AccountStatus.ACTIVE);
+        accountRepo.save(account);
+    }
+
+    /**
+     * Deletes an account.
+     * 
+     * <p>
+     * This method performs the following steps:
+     * <ul>
+     * <li>Retrieves the account by account number</li>
+     * <li>Validates that the account exists</li>
+     * <li>Deletes the account</li>
+     * </ul>
+     * 
+     * @param accountNumber unique identifier of the account
+     * @throws AccountNotFoundException if the account does not exist
+     */
+    public void deleteAccount(String accountNumber) {
+        Account account = accountRepo.findByAccountNumber(accountNumber)
+                .orElseThrow(() -> new AccountNotFoundException("Account with provided number does not exists"));
+
+        accountRepo.delete(account);
+    }
+
+    /**
+     * Activates an account.
+     * 
+     * <p>
+     * This method performs the following steps:
+     * <ul>
+     * <li>Retrieves the account by account number</li>
+     * <li>Validates that the account exists</li>
+     * <li>Activates the account</li>
+     * </ul>
+     * 
+     * @param accountNumber unique identifier of the account
+     * @throws AccountNotFoundException if the account does not exist
+     */
+    public void activateAccount(String accountNumber) {
+        Account account = accountRepo.findByAccountNumber(accountNumber)
+                .orElseThrow(() -> new AccountNotFoundException("Account with provided number does not exists"));
+
+        account.setStatus(AccountStatus.ACTIVE);
+        accountRepo.save(account);
     }
 
 }
